@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="UserMapper">
+
+    <select id="count" resultType="int">
+        SELECT
+            COUNT(1)
+        FROM
+            user
+        WHERE
+            status = 0
+    </select>
+
+    <insert id="insert" parameterType="map">
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            select @@IDENTITY
+        </selectKey>
+        INSERT INTO `kanban`.`user` (`username`, `password`, `ctime`, `status`)
+        VALUES (#{username}, #{password}, now(),0);
+    </insert>
+
+    <select id="select" parameterType="map" resultType="com.lianjia.sh.kanban.model.User">
+        SELECT
+            *
+        FROM
+            user
+        WHERE
+            status = 0 AND username = #{username}
+                AND password = #{password}
+    </select>
+
+</mapper>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="DictMapper">
+
+    <select id="list" resultType="com.lianjia.sh.kanban.model.Dict">
+        SELECT
+            *
+        FROM
+            dict
+        WHERE
+            status = 0
+        <if test="name != null and name != '' ">
+            and name = #{name}
+        </if>
+        <if test="ename != null and ename != '' ">
+            and ename = #{ename}
+        </if>
+        <if test="parentCode != null ">
+            and parentCode = #{parentCode}
+        </if>
+        <if test="code != null ">
+            and code = #{code}
+        </if>
+    </select>
+
+    <select id="select" parameterType="map" resultType="com.lianjia.sh.kanban.model.Dict">
+        SELECT
+            *
+        FROM
+            dict
+        WHERE
+            status = 0 and id = #{id}
+    </select>
+
+    <update id="delete" parameterType="map">
+        UPDATE dict a
+        SET
+            a.status = - 1, a.utime = now()
+        WHERE
+            a.status = 0 AND id = #{id}
+    </update>
+
+    <update id="update" parameterType="map">
+        UPDATE dict a
+        SET
+        a.name = #{name}, a.ename = #{ename}, a.parentCode = #{desc}, a.utime = now()
+        WHERE
+        a.status = 0 AND id = #{id}
+    </update>
+
+    <insert id="insert" parameterType="map">
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            select @@IDENTITY
+        </selectKey>
+        INSERT INTO `kanban`.`dict` (`name`, `ename`, `desc`, `code`, `parentCode`, `key`, `value`, `ctime`, `status`)
+        VALUES ( #{name}, #{ename}, #{desc}, #{code}, #{parentCode}, #{key}, #{value}, now(), 0);
+    </insert>
+
+</mapper>

@@ -1,0 +1,9 @@
+login:
+  interceptor:
+    includePatterns:
+      - /**
+    excludePatterns:
+      - /init
+      - /login
+      - /error
+      - /admin

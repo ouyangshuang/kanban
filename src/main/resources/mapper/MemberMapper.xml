@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="MemberMapper">
+
+    <insert id="insert" parameterType="map">
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            select @@IDENTITY
+        </selectKey>
+        INSERT INTO `kanban`.`member` (`userId`, `name`, `email`, `cm`, `ctime`, `status`)
+        VALUES (#{userId}, #{name}, #{email}, #{cm}, now(),0);
+    </insert>
+
+    <select id="list" parameterType="map" resultType="com.lianjia.sh.kanban.model.Member">
+        SELECT
+            m.*
+        FROM
+            relationTeamMember rtm
+                LEFT JOIN
+            member m ON rtm.memberId = m.id AND rtm.status = 0
+                AND m.status = 0
+        WHERE
+            teamId = #{teamId}
+    </select>
+
+    <select id="select" parameterType="map" resultType="com.lianjia.sh.kanban.model.Member">
+        SELECT
+            *
+        FROM
+            member
+        WHERE
+            status = 0 AND userId = #{userId}
+    </select>
+
+</mapper>

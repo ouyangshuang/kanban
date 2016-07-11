@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="TeamMapper">
+
+    <select id="list" resultType="com.lianjia.sh.kanban.model.Team">
+        SELECT
+            *
+        FROM
+            team
+        WHERE
+            status = 0
+        <if test="name != null and name != '' ">
+            and name = #{name}
+        </if>
+    </select>
+
+    <select id="select" parameterType="map" resultType="com.lianjia.sh.kanban.model.Team">
+        SELECT
+            *
+        FROM
+            team
+        WHERE
+            status = 0 and id = #{id}
+    </select>
+
+    <update id="delete" parameterType="map">
+        UPDATE team a
+        SET
+            a.status = - 1, a.um = #{um}, a.utime = now()
+        WHERE
+            a.status = 0 AND id = #{id}
+    </update>
+
+    <update id="update" parameterType="map">
+        UPDATE team a
+        SET
+        a.name = #{name}, a.title = #{title}, a.um = #{um}, a.utime = now()
+        WHERE
+        a.status = 0 AND id = #{id}
+    </update>
+
+    <insert id="insert" parameterType="map">
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            select @@IDENTITY
+        </selectKey>
+        INSERT INTO `kanban`.`team` (`name`, `title`, `cm`, `ctime`, `status`)
+        VALUES (#{name}, #{title}, #{cm}, now(), 0);
+    </insert>
+    
+    <insert id="insertMember" parameterType="map">
+        INSERT INTO `kanban`.`relationTeamMember` (`teamId`, `memberId`, `cm`, `ctime`, `status`)
+        VALUES (#{teamId}, #{memberId}, #{cm}, now(), 0);
+    </insert>
+
+    <update id="deleteMember" parameterType="map">
+        UPDATE relationTeamMember a
+        SET
+        a.status = - 1, a.um = #{um}, a.utime = now()
+        WHERE
+        a.status = 0 AND teamId = #{teamId} and memberId = #{memberId}
+    </update>
+
+</mapper>
